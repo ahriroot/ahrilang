@@ -19,7 +19,7 @@ pub const Variable = union(enum) {
 pub fn binaryAdd(first: Variable, second: Variable) BinaryOperate!Variable {
     switch (first) {
         Variable.Integer => |fir| switch (second) {
-            Variable.Integer => |sec| return Variable{ .Integer = fir + sec },
+            Variable.Integer => |sec| return Variable{ .Integer = fir +% sec },
             Variable.Float => |sec| {
                 var t: f64 = @floatFromInt(fir);
                 return Variable{ .Float = t + sec };
@@ -248,6 +248,7 @@ test "Variable Binary Add" {
     var b: Variable = Variable{ .Integer = 2 };
     var c: Variable = Variable{ .Float = 1.0 };
     var d: Variable = Variable{ .Float = 2.0 };
+    var max: Variable = Variable{ .Integer = 9223372036854775807 };
 
     try expect(eq(try binaryAdd(a, b), Variable{ .Integer = 3 }));
     try expect(eq(try binaryAdd(a, c), Variable{ .Float = 2.0 }));
@@ -255,6 +256,7 @@ test "Variable Binary Add" {
     try expect(eq(try binaryAdd(b, c), Variable{ .Float = 3.0 }));
     try expect(eq(try binaryAdd(b, d), Variable{ .Float = 4.0 }));
     try expect(eq(try binaryAdd(c, d), Variable{ .Float = 3.0 }));
+    try expect(eq(try binaryAdd(max, a), Variable{ .Float = -9223372036854775808 }));
 }
 
 test "Variable Binary Sub" {
